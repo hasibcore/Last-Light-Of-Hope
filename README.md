@@ -1,2 +1,4 @@
-# Last-Light-Of-Hope
-A 2D iGraphics based survival game project - Last Light Of Hope.
+© 2026 hasibcore. All rights reserved.
+
+This repository contains my personal game project. Unauthorized use, copying, or redistribution is prohibited.
+

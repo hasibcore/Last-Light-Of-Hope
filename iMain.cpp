@@ -1,4 +1,4 @@
-﻿#define _CRT_SECURE_NO_WARNINGS  // Disables warnings for certain insecure functions (like sprintf)
+#define _CRT_SECURE_NO_WARNINGS  // Disables warnings for certain insecure functions (like sprintf)
 #include "iGraphics.h"             // Includes the custom iGraphics library header for graphics functions
 #include <stdio.h>                 // Includes standard input/output functions (e.g., sprintf)
 #include <math.h>                  // Includes math functions (e.g., sqrt, pow, abs)
@@ -103,6 +103,9 @@ int maze[ROWS][COLS] = {           // 2D array representing the maze layout
 int homePage = 1;                  // Flag for main menu screen (1 = active)
 void drawHomePage();               // Function declaration for drawing main menu
 
+int instructionPage = 0;       // 1 = showing instruction screen
+int instructionTimer = 0;      // counts frames while showing instructions
+
 int startPage = 0;                 // Flag for maze gameplay screen (1 = active)
 void drawStartPage();              // Function declaration for drawing maze gameplay
 void startButtonClickHandler();    // Function declaration for START button action
@@ -203,6 +206,10 @@ void iDraw()                       // Main drawing function called every frame
 	else if (homePage == 1)        // If main menu active
 	{
 		drawHomePage();            // Draw main menu
+	}
+	else if (instructionPage == 1)  //add the intruction page
+	{
+		iShowBMP(0, 0, "Images\\instruction.bmp");
 	}
 	else if (startPage == 1)       // If maze gameplay active
 	{
@@ -327,6 +334,17 @@ void countDown()                   // Timer function called every second
 void fixedUpdate()                 // Timer function called every 20ms (game logic update)
 {
 	setMusic(MUSIC_MAZE_BG);       // Attempt to play maze background (may be overridden)
+	if (instructionPage == 1)      // Instruction screen timer (5 seconds = 250 frames at 20ms timer)
+	{
+		instructionTimer++;
+		if (instructionTimer >= 250)   // 250 × 20ms = 5000ms = 5 seconds
+		{
+			instructionPage = 0;
+			startPage = 1;
+			instructionTimer = 0;
+		}
+		return;   // skip the rest of fixedUpdate while instructions are shown
+	}
 	if (startPage == 1 && !mazeMusicPlaying) // Start maze creepy music when entering maze
 	{
 		stopSound();
@@ -1007,8 +1025,9 @@ void drawFightPage()               // Draw fight scene
 void startButtonClickHandler()     // Handler for START button
 {
 	homePage = 0;
-	startPage = 1;
-	playerX = 60;
+	instructionPage = 1;           // Show instruction screen first
+	instructionTimer = 0;          // Reset timer
+	playerX = 60;                  // Still reset game variables (good practice)
 	playerY = 60;
 	playerDirection = 0;
 	gameTime = INITIAL_TIME;
